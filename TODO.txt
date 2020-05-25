@@ -3,8 +3,8 @@
 2. Colocar a barrinha jogador na tela //OK
     2.1 Fazer o movimento do jogador //OK
 3. Colocar a bolinha na tela //OK
-    3.1 Fazer o movimento da bolinha
-4. Fazer tijolinhos
+    3.1 Fazer o movimento da bolinha //OK
+4. Fazer tijolinhos //OK
     4.1 Fazer a colisão da bolinha com os tijolinhos
 5. Fazer a pontuação do jogador, game over e reset 
 6. Fazer tela de menu e pontuação máxima (extra)
