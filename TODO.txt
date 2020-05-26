@@ -5,7 +5,14 @@
 3. Colocar a bolinha na tela //OK
     3.1 Fazer o movimento da bolinha //OK
 4. Fazer tijolinhos //OK
-    4.1 Fazer a colisão da bolinha com os tijolinhos
-5. Fazer a pontuação do jogador, game over e reset 
-6. Fazer tela de menu e pontuação máxima (extra)
-7. Ajeitar assets
+    4.1 Fazer a colisão da bolinha com os tijolinhos //OK
+5. Fazer a pontuação do jogador, game over e reset //OK
+6. Fazer tela de menu e quando abrir o jogo
+    6.1 Colocar botão para entrar no jogo
+    6.2 Salvar pontuações máximas
+    6.3 Colocar tecla para ver pontuações máximas
+7. Fazer timestate para fases
+    7.1 Fazer 10 fases
+    7.2 Fazer game over quando terminar todas as fases
+8. Ajeitar assets
+9. Por sons
