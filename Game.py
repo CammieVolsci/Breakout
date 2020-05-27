@@ -1,9 +1,5 @@
-import pygame, Jogador, math
+import actors, pygame, math, random, datetime
 from pygame.locals import *
-
-WHITE = (255,255,255)
-BLACK = (0,0,0)
-CORES_BLOCOS = ["assets/barrinha1.png","assets/barrinha2.png","assets/barrinha3.png","assets/barrinha4.png","assets/barrinha5.png"]
 
 class BreakoutGame:
 
@@ -24,7 +20,8 @@ class BreakoutGame:
     bolinha = None
     bloco = []
 
-    def __init__(self):
+    def __init__(self,**settings):
+        self.__dict__.update(settings)
         self.window_width = 800
         self.window_height = 650
         self.fps = 30   
@@ -99,23 +96,24 @@ class BreakoutGame:
         self.bolinha.y = 350
 
         for i in range(self.total_blocos):
-            self.bloco.append(Jogador.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),CORES_BLOCOS[math.floor(i/9)]))
+            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),CORES_BLOCOS[math.floor(i/9)]))
 
         self.game_over = False
 
     def loop(self):
+        random.seed(datetime.time())  
         fpsclock = pygame.time.Clock()   
-        self.jogador = Jogador.Paddle()
-        self.bolinha = Jogador.Ball()
+        self.jogador = actors.Paddle(340,600,self.player_image)
+        self.bolinha = actors.Ball(random.randint(300,600),random.randint(250,400),self.ball_image)
 
         for i in range(self.total_blocos):
-            self.bloco.append(Jogador.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),CORES_BLOCOS[math.floor(i/9)]))
+            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),self.cores_blocos[math.floor(i/9)]))
 
-        gameOverSurf = self.basic_font.render('Game Over',True,WHITE)
+        gameOverSurf = self.basic_font.render('Game Over',True,self.white)
         gameOverRect = gameOverSurf.get_rect()
         gameOverRect.center = (405,250)   
 
-        resetSurf = self.basic_font.render('Pressione R para reiniciar',True,WHITE)
+        resetSurf = self.basic_font.render('Pressione R para reiniciar',True,self.white)
         resetRect = resetSurf.get_rect()
         resetRect.center = (405,300)  
 
@@ -123,15 +121,15 @@ class BreakoutGame:
             pontuacao_txt = str(self.jogador.pontuacao) 
             vidas_txt = str(self.jogador.vidas)
 
-            pontuacaoSurf = self.small_font.render('PONTOS: ' + pontuacao_txt,True,WHITE)
+            pontuacaoSurf = self.small_font.render('PONTOS: ' + pontuacao_txt,True,self.white)
             pontuacaoRect = pontuacaoSurf.get_rect()
             pontuacaoRect.center = (70,20)
 
-            vidasSurf = self.small_font.render('VIDAS: ' + vidas_txt,True,WHITE)
+            vidasSurf = self.small_font.render('VIDAS: ' + vidas_txt,True,self.white)
             vidasRect = vidasSurf.get_rect()
             vidasRect.center = (740,20)
 
-            self.displaysurf.fill(BLACK) 
+            self.displaysurf.fill(self.black) 
             self.displaysurf.blit(pontuacaoSurf,pontuacaoRect) 
             self.displaysurf.blit(vidasSurf,vidasRect)
 
@@ -149,8 +147,17 @@ class BreakoutGame:
             fpsclock.tick(self.fps)
 
 
-def main():
-    game = BreakoutGame()
+def main():   
+    settings = {
+        'white' : (255,255,255),
+        'black' : (0,0,0),
+        'ball_image' : "assets/ball.png",
+        'player_image' : "assets/paddle.png",        
+        'cores_blocos' : ["assets/barrinha1.png","assets/barrinha2.png","assets/barrinha3.png",
+        "assets/barrinha4.png","assets/barrinha5.png"]
+    }
+
+    game = BreakoutGame(**settings)
     game.loop()
 
 ## MAIN ##
