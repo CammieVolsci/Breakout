@@ -24,7 +24,7 @@ class Paddle(BaseActor):
         super().__init__(x,y,image)
         self.mover = 0       
         self.pontuacao = 0
-        self.vidas = 5   
+        self.vidas = 1   
 
     def movimento(self):
         self.x += self.mover
