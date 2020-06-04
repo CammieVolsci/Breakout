@@ -8,8 +8,8 @@
     4.1 Fazer a colisão da bolinha com os tijolinhos //OK
 5. Fazer a pontuação do jogador, game over e reset //OK
 6. Fazer tela de menu e quando abrir o jogo //OK
-    6.1 Colocar botão para entrar no jogo 
-    6.2 Salvar pontuações máximas
+    6.1 Colocar botão para entrar no jogo //OK
+    6.2 Salvar pontuações máximas //OK
     6.3 Colocar tecla para ver pontuações máximas
 7. Fazer statemachine para fases
     7.1 Fazer 10 fases
