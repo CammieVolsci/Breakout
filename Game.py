@@ -12,6 +12,7 @@ class StateMachine:
 class Textos:
 
     white = (255,255,255)
+    black = (0,0,0) 
     
     def __init__(self):
         pygame.init()          
@@ -43,12 +44,16 @@ class Textos:
     def menu_txt(self,displaysurf):
         logoSurf = self.basic_font.render('BREAKOUT',True,self.white)
         enterSurf = self.basic_font.render('Press ENTER',True,self.white)
+        scoreSurf = self.basic_font.render('Press SPACE for MAX SCORES',True,self.white)
         logoRect = logoSurf.get_rect()
         enterRect = enterSurf.get_rect()
-        logoRect.center = (400,300)
-        enterRect.center = (400,350)         
+        scoreRect = scoreSurf.get_rect()
+        logoRect.center = (400,250)
+        enterRect.center = (400,300)   
+        scoreRect.center = (400,400)      
         displaysurf.blit(logoSurf,logoRect)
         displaysurf.blit(enterSurf,enterRect)
+        displaysurf.blit(scoreSurf,scoreRect)
 
     def input_box(self,displaysurf,nome_jogador):
         text_box = pygame.Rect(205,380,50,30)
@@ -62,11 +67,18 @@ class Textos:
         pygame.draw.rect(displaysurf,self.white,text_box,0)
         displaysurf.blit(textSurf,(text_box.x+5,text_box.y+5))
 
-    def maxscore_menu(self,displaysurf,lista):
-        scoreSurf = self.basic_font.render('Pontuações máximas:',True,self.white)
+    def maxscore_title(self,displaysurf):
+        scoreSurf = self.basic_font.render('Pontuações máximas [Press ENTER]',True,self.white)
         scoreRect = scoreSurf.get_rect()
-        scoreRect.center(50,50)
+        scoreRect.center = (400,50)
+        displaysurf.blit(scoreSurf,scoreRect)
 
+    def maxscore_menu(self,displaysurf,indice,x,y):
+        texto = str(indice)
+        scoreSurf = self.basic_font.render(texto,True,self.white)
+        scoreRect = scoreSurf.get_rect()
+        scoreRect.center = (x,y)
+        displaysurf.blit(scoreSurf,scoreRect)
 
 class ScoreMenu(StateMachine):
     
@@ -85,7 +97,9 @@ class ScoreMenu(StateMachine):
         pass
 
     def handle_events(self,event):
-        pass
+        if event.type == KEYDOWN:
+            if event.key == K_RETURN or event.key == K_KP_ENTER:
+                self.end = True
 
     def update(self,displaysurf):
         t = Textos()
@@ -96,8 +110,15 @@ class ScoreMenu(StateMachine):
         for i in range(count):
             self.lista.append(self.file.readline())
         self.file.close()
+      
+        t.maxscore_title(displaysurf)
+        y = 120
+        for i in range(len(self.lista)):
+            t.maxscore_menu(displaysurf,self.lista[i],400,y)
+            y = y + 50
+            if i == 9:
+                break
     
-
 class MainMenu(StateMachine):  
 
     black = (0,0,0) 
@@ -116,7 +137,7 @@ class MainMenu(StateMachine):
             if event.key == K_RETURN or event.key == K_KP_ENTER:
                 self.next = 'game'
                 self.end = True
-            elif event.key == K_BACKSPACE:
+            elif event.key == K_SPACE:
                 self.next = 'score'
                 self.end = True
 
@@ -332,8 +353,8 @@ def main():
     }
 
     dicionario_estados = {
-        'menu' : MainMenu(),
         'game' : Game(**game_images),
+        'menu' : MainMenu(),     
         'score' : ScoreMenu()
     }
 
