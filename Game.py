@@ -20,7 +20,7 @@ class Textos:
         self.small_font = pygame.font.Font('freesansbold.ttf',20)  
 
     def gameover(self,displaysurf):
-        gameOverSurf = self.basic_font.render('Game Over',True,self.white)
+        gameOverSurf = self.basic_font.render('MainGame Over',True,self.white)
         resetSurf = self.basic_font.render('Pressione ENTER para reiniciar',True,self.white)
         gameOverRect = gameOverSurf.get_rect()
         resetRect = resetSurf.get_rect()
@@ -135,7 +135,7 @@ class MainMenu(StateMachine):
     def handle_events(self,event):
         if event.type == KEYDOWN:
             if event.key == K_RETURN or event.key == K_KP_ENTER:
-                self.next = 'game'
+                self.next = 'fase1'
                 self.end = True
             elif event.key == K_SPACE:
                 self.next = 'score'
@@ -147,7 +147,7 @@ class MainMenu(StateMachine):
         displaysurf.fill(self.black)
         t.menu_txt(displaysurf)        
 
-class Game(StateMachine):
+class MainGame(StateMachine):
    
     background = None
     game_over = False  
@@ -157,7 +157,8 @@ class Game(StateMachine):
     bolinha = None
     bloco = []
 
-    total_blocos = 45  
+    total_blocos = 45 
+    blocos_destruidos = 0 
     pontuacao_max = 0
     nome_jogador = ''
     file = None
@@ -169,12 +170,7 @@ class Game(StateMachine):
         self.__dict__.update(game_images)                    
 
     def startup(self):      
-        random.seed(datetime.time())
-        self.jogador = actors.Paddle(340,600,self.player_image)
-        self.bolinha = actors.Ball(random.randint(300,600),random.randint(250,400),self.ball_image)
-
-        for i in range(self.total_blocos):
-            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),self.cores_blocos[math.floor(i/9)]))
+        pass
 
     def cleanup(self):
         self.bloco.clear()
@@ -230,6 +226,7 @@ class Game(StateMachine):
                 bloco[i].kill()
                 jogador.pontuacao += 10
                 bolinha.mover_y *= -1
+                self.blocos_destruidos += 1
 
         jogador.movimento()
 
@@ -248,26 +245,9 @@ class Game(StateMachine):
             if(bloco[i].image!=0):
                 bloco[i].desenhar(displaysurf)         
 
-    def update(self,displaysurf):   
-
-        t = Textos()
-
-        pontuacao_txt = str(self.jogador.pontuacao) 
-        vidas_txt = str(self.jogador.vidas)
-   
-        displaysurf.fill(self.black) 
-        t.pontuacao(pontuacao_txt,displaysurf)
-        t.vidas(vidas_txt,displaysurf)
-
-        if self.jogador.vidas <= 0:
-            self.pontuacao_max = self.jogador.pontuacao  
-            self.game_over = True          
-            t.gameover(displaysurf)
-            t.input_box(displaysurf,self.nome_jogador)                     
-
-        self.actors_update()
-        self.actors_draw(displaysurf)  
-
+    def update(self,displaysurf):  
+        pass 
+        
     def salvar_pontuacaomax(self):
 
         self.file = open ('max_scores','r')
@@ -283,7 +263,79 @@ class Game(StateMachine):
         for i in range(len(self.lista)):
             self.file.write(self.lista[i])
         self.file.close()       
-                    
+
+class FaseI(MainGame):
+
+    def __init__(self,**game_images):
+        super().__init__(**game_images)
+
+    def startup(self):
+        random.seed(datetime.time())
+        self.jogador = actors.Paddle(340,600,self.player_image)
+        self.bolinha = actors.Ball(random.randint(300,600),random.randint(250,400),self.ball_image)
+
+        for i in range(self.total_blocos):
+            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),self.cores_blocos[math.floor(i/9)]))
+
+    def update(self,displaysurf):
+        t = Textos()
+
+        pontuacao_txt = str(self.jogador.pontuacao) 
+        vidas_txt = str(self.jogador.vidas)
+   
+        displaysurf.fill(self.black) 
+        t.pontuacao(pontuacao_txt,displaysurf)
+        t.vidas(vidas_txt,displaysurf)
+
+        if self.jogador.vidas <= 0:
+            self.pontuacao_max = self.jogador.pontuacao  
+            self.game_over = True          
+            t.gameover(displaysurf)
+            t.input_box(displaysurf,self.nome_jogador)  
+
+        if self.blocos_destruidos == self.total_blocos:     
+            self.next = 'fase2'
+            self.end = True             
+
+        self.actors_update()
+        self.actors_draw(displaysurf)  
+
+class FaseII(MainGame):
+
+    def __init__(self,**game_images):
+        super().__init__(**game_images) 
+
+    def startup(self):
+        random.seed(datetime.time())
+        self.jogador = actors.Paddle(340,600,self.player_image)
+        self.bolinha = actors.Ball(random.randint(300,600),random.randint(250,400),self.ball_image)
+
+        for i in range(self.total_blocos):
+            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),"assets/barrinha1.png"))
+
+    def update(self,displaysurf):
+        t = Textos()
+
+        pontuacao_txt = str(self.jogador.pontuacao) 
+        vidas_txt = str(self.jogador.vidas)
+   
+        displaysurf.fill(self.black) 
+        t.pontuacao(pontuacao_txt,displaysurf)
+        t.vidas(vidas_txt,displaysurf)
+
+        if self.jogador.vidas <= 0:
+            self.pontuacao_max = self.jogador.pontuacao  
+            self.game_over = True          
+            t.gameover(displaysurf)
+            t.input_box(displaysurf,self.nome_jogador)  
+
+        if self.blocos_destruidos == self.total_blocos:        
+            self.next = 'menu'
+            self.end = True             
+
+        self.actors_update()
+        self.actors_draw(displaysurf)  
+
 class BreakoutGame:
 
     state_dictionary = None
@@ -342,7 +394,7 @@ class BreakoutGame:
 def main():   
     settings = {
         'size' : (800,650),
-        'fps' : 30,           
+        'fps' : 30           
     }
 
     game_images = {
@@ -353,9 +405,11 @@ def main():
     }
 
     dicionario_estados = {
-        'game' : Game(**game_images),
+        #'game' : MainGame(**game_images),
         'menu' : MainMenu(),     
-        'score' : ScoreMenu()
+        'score' : ScoreMenu(),
+        'fase1' : FaseI(**game_images),
+        'fase2' : FaseII(**game_images)
     }
 
     main_game = BreakoutGame(**settings)
