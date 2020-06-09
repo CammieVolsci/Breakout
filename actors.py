@@ -24,7 +24,7 @@ class Paddle(BaseActor):
         super().__init__(x,y,image)
         self.mover = 0       
         self.pontuacao = 0
-        self.vidas = 5   
+        self.vidas = 3   
 
     def movimento(self):
         self.x += self.mover
@@ -62,6 +62,8 @@ class Ball(BaseActor):
             self.lost = True
             self.x = random.randint(300,600)
             self.y = random.randint(250,400)
+            self.mover_x = 7
+            self.mover_y = -7
         
         self.rect.x = self.x
         self.rect.y = self.y             

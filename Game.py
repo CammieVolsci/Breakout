@@ -157,7 +157,7 @@ class MainGame(StateMachine):
     bolinha = None
     bloco = []
 
-    total_blocos = 45 
+    total_blocos = 0 
     blocos_destruidos = 0 
     pontuacao_max = 0
     nome_jogador = ''
@@ -202,9 +202,9 @@ class MainGame(StateMachine):
                     self.nome_jogador += event.unicode             
             else:      
                 if event.key == K_LEFT:
-                    jogador.mover = -9
+                    jogador.mover = -10
                 elif event.key == K_RIGHT:
-                    jogador.mover = 9
+                    jogador.mover = 10
         elif event.type == KEYUP:
             if event.key == K_LEFT or event.key == K_RIGHT:
                 jogador.mover = 0
@@ -268,6 +268,7 @@ class FaseI(MainGame):
 
     def __init__(self,**game_images):
         super().__init__(**game_images)
+        self.total_blocos = 45
 
     def startup(self):
         random.seed(datetime.time())
@@ -303,7 +304,8 @@ class FaseI(MainGame):
 class FaseII(MainGame):
 
     def __init__(self,**game_images):
-        super().__init__(**game_images) 
+        super().__init__(**game_images)
+        self.total_blocos = 54 
 
     def startup(self):
         random.seed(datetime.time())
@@ -311,7 +313,7 @@ class FaseII(MainGame):
         self.bolinha = actors.Ball(random.randint(300,600),random.randint(250,400),self.ball_image)
 
         for i in range(self.total_blocos):
-            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),"assets/barrinha1.png"))
+            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),self.cores_blocos[math.floor(i/9)%6]))
 
     def update(self,displaysurf):
         t = Textos()
@@ -330,8 +332,78 @@ class FaseII(MainGame):
             t.input_box(displaysurf,self.nome_jogador)  
 
         if self.blocos_destruidos == self.total_blocos:        
-            self.next = 'menu'
+            self.next = 'fase3'
             self.end = True             
+
+        self.actors_update()
+        self.actors_draw(displaysurf)  
+
+class FaseIII(MainGame):
+
+    def __init__(self,**game_images):
+        super().__init__(**game_images)
+        self.total_blocos = 63 
+
+    def startup(self):
+        random.seed(datetime.time())
+        self.jogador = actors.Paddle(340,600,self.player_image)
+        self.bolinha = actors.Ball(random.randint(300,600),random.randint(250,400),self.ball_image)
+
+        for i in range(self.total_blocos):
+            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),self.cores_blocos[math.floor(i/9)%7]))
+
+    def update(self,displaysurf):
+        t = Textos()
+
+        pontuacao_txt = str(self.jogador.pontuacao) 
+        vidas_txt = str(self.jogador.vidas)
+   
+        displaysurf.fill(self.black) 
+        t.pontuacao(pontuacao_txt,displaysurf)
+        t.vidas(vidas_txt,displaysurf)
+
+        if self.jogador.vidas <= 0:
+            self.pontuacao_max = self.jogador.pontuacao  
+            self.game_over = True          
+            t.gameover(displaysurf)
+            t.input_box(displaysurf,self.nome_jogador)  
+
+        if self.blocos_destruidos == self.total_blocos:        
+            self.next = 'fase4'
+            self.end = True             
+
+        self.actors_update()
+        self.actors_draw(displaysurf)  
+
+class FaseIV(MainGame):
+    
+    def __init__(self,**game_images):
+        super().__init__(**game_images)
+        self.total_blocos = 72 
+
+    def startup(self):
+        random.seed(datetime.time())
+        self.jogador = actors.Paddle(340,600,self.player_image)
+        self.bolinha = actors.Ball(random.randint(300,600),random.randint(250,400),self.ball_image)
+
+        for i in range(self.total_blocos):
+            self.bloco.append(actors.Blocks(1 + 90*(i%9),35 + 35*math.floor(i/9),self.cores_blocos[math.floor(i/9)%8]))
+
+    def update(self,displaysurf):
+        t = Textos()
+
+        pontuacao_txt = str(self.jogador.pontuacao) 
+        vidas_txt = str(self.jogador.vidas)
+   
+        displaysurf.fill(self.black) 
+        t.pontuacao(pontuacao_txt,displaysurf)
+        t.vidas(vidas_txt,displaysurf)
+
+        if (self.jogador.vidas <= 0) or (self.blocos_destruidos == self.total_blocos):
+            self.pontuacao_max = self.jogador.pontuacao  
+            self.game_over = True          
+            t.gameover(displaysurf)
+            t.input_box(displaysurf,self.nome_jogador)           
 
         self.actors_update()
         self.actors_draw(displaysurf)  
@@ -401,7 +473,8 @@ def main():
         'ball_image' : "assets/ball.png",
         'player_image' : "assets/paddle.png",        
         'cores_blocos' : ["assets/barrinha1.png","assets/barrinha2.png","assets/barrinha3.png",
-        "assets/barrinha4.png","assets/barrinha5.png"]    
+        "assets/barrinha4.png","assets/barrinha5.png","assets/barrinha6.png","assets/barrinha7.png",
+        "assets/barrinha8.png"]    
     }
 
     dicionario_estados = {
@@ -409,7 +482,9 @@ def main():
         'menu' : MainMenu(),     
         'score' : ScoreMenu(),
         'fase1' : FaseI(**game_images),
-        'fase2' : FaseII(**game_images)
+        'fase2' : FaseII(**game_images),
+        'fase3' : FaseIII(**game_images),
+        'fase4' : FaseIV(**game_images)
     }
 
     main_game = BreakoutGame(**settings)

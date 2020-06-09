@@ -12,7 +12,7 @@
     6.2 Salvar pontuações máximas //OK
     6.3 Colocar tecla para ver pontuações máximas //OK
 7. Fazer statemachine para fases //OK
-    7.1 Fazer 10 fases
-    7.2 Fazer game over quando terminar todas as fases
-8. Ajeitar assets
+    7.1 Fazer 10 fases //OK
+    7.2 Fazer game over quando terminar todas as fases //OK
+8. Ajeitar assets //OK
 9. Por sons
