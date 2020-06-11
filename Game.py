@@ -20,7 +20,7 @@ class Textos:
         self.small_font = pygame.font.Font('freesansbold.ttf',20)  
 
     def gameover(self,displaysurf):
-        gameOverSurf = self.basic_font.render('MainGame Over',True,self.white)
+        gameOverSurf = self.basic_font.render('Game Over',True,self.white)
         resetSurf = self.basic_font.render('Pressione ENTER para reiniciar',True,self.white)
         gameOverRect = gameOverSurf.get_rect()
         resetRect = resetSurf.get_rect()
@@ -168,7 +168,10 @@ class MainGame(StateMachine):
         StateMachine.__init__(self)
         Textos.__init__(self)
         self.__dict__.update(game_images)
-        self.som1 = pygame.mixer.Sound("assets/pin.wav")                      
+        self.som_colisao_jogador = pygame.mixer.Sound("assets/pin.wav")
+        self.som_colisao_parede = pygame.mixer.Sound("assets/pon.wav")
+        self.som_colisao_blocos = pygame.mixer.Sound("assets/pong.wav")
+        self.som_perdeu = pygame.mixer.Sound("assets/dead.wav")                      
 
     def startup(self):      
         pass
@@ -216,12 +219,17 @@ class MainGame(StateMachine):
         bloco = self.bloco
 
         if bolinha.lost == True:
-            jogador.vidas -= 1
+            jogador.vidas -= 1          
+            self.som_perdeu.play()
             bolinha.lost = False
+
+        if bolinha.wall == True:
+            self.som_colisao_parede.play()
+            bolinha.wall = False
 
         if jogador.teste_colisao(bolinha):
             bolinha.mover_y *= -1
-            self.som1.play()
+            self.som_colisao_jogador.play()
 
         for i in range(self.total_blocos):
             if bloco[i].rect!=0 and bolinha.teste_colisao(bloco[i]):
@@ -229,6 +237,7 @@ class MainGame(StateMachine):
                 jogador.pontuacao += 10
                 bolinha.mover_y *= -1
                 self.blocos_destruidos += 1
+                self.som_colisao_blocos.play()
 
         jogador.movimento()
 

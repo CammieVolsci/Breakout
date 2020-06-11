@@ -46,17 +46,21 @@ class Ball(BaseActor):
         self.mover_x = 7 * pow(-1,random.randint(1,2))
         self.mover_y = -7 
         self.lost = False
+        self.wall = False
 
     def movimento(self):                 
         self.x += self.mover_x
         self.y += self.mover_y
 
         if self.x <= 0:
+            self.wall = True
             self.mover_x *= -1
         elif self.x >= 775:
+            self.wall = True
             self.mover_x *= -1
 
         if self.y <= 0:
+            self.wall = True
             self.mover_y *= -1
         elif self.y >= 625:
             self.lost = True
