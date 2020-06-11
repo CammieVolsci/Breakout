@@ -124,8 +124,8 @@ class MainMenu(StateMachine):
     black = (0,0,0) 
 
     def __init__(self):
-        StateMachine.__init__(self)        
-
+        StateMachine.__init__(self)
+    
     def startup(self):
         pass
 
@@ -167,7 +167,8 @@ class MainGame(StateMachine):
     def __init__(self,**game_images):
         StateMachine.__init__(self)
         Textos.__init__(self)
-        self.__dict__.update(game_images)                    
+        self.__dict__.update(game_images)
+        self.som1 = pygame.mixer.Sound("assets/pin.wav")                      
 
     def startup(self):      
         pass
@@ -220,6 +221,7 @@ class MainGame(StateMachine):
 
         if jogador.teste_colisao(bolinha):
             bolinha.mover_y *= -1
+            self.som1.play()
 
         for i in range(self.total_blocos):
             if bloco[i].rect!=0 and bolinha.teste_colisao(bloco[i]):
